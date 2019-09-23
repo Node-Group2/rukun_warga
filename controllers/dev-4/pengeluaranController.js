@@ -25,9 +25,10 @@ exports.create = function(req, res) {
     var data = {
         id_dd: req.body.id_dd,
         pengeluaran: req.body.pengeluaran,
-        tanggal_pengeluaran: req.body.tanggal_pengeluaran
+        jenis_pengeluaran: req.body.jenis_pengeluaran,
+        tanggal_pengeluaran: new Date()
     }
-    db.query('INSERT INTO pengeluaran (id_dd, pengeluaran, tanggal_pengeluaran) VALUES (?,?,?)', [data.id_dd, data.pengeluaran, data.tanggal_pengeluaran], function(error, results) {
+    db.query('INSERT INTO pengeluaran (id_dd, pengeluaran, jenis_pengeluaran,  tanggal_pengeluaran) VALUES (?,?,?,?)', [data.id_dd, data.pengeluaran, data.jenis_pengeluaran, data.tanggal_pengeluaran], function(error, results) {
         if (error) throw error;
 
         var id = results.insertId;
@@ -38,15 +39,26 @@ exports.create = function(req, res) {
             res.send(400)
         }
     })
+    db.query('UPDATE kas SET total_kas=total_kas-? WHERE jenis_bendahara=?', [data.pengeluaran, data.jenis_pengeluaran],
+        function(error, results) {
+            if (error) throw error
+            var changedRows = results.changedRows;
+            if (changedRows > 0) {
+                data.id = id
+                res.send(data, 200)
+            } else {
+                res.send(404)
+            }
+        })
+
 }
 exports.update = function(req, res) {
     var id = req.params.id;
     var data = {
-        id_dd: req.body.id_dd,
         pengeluaran: req.body.pengeluaran,
-        tanggal_pengeluaran: req.body.tanggal_pengeluaran
+        tanggal_pengeluaran: new Date()
     }
-    db.query('UPDATE pengeluaran set id_dd=?, pengeluaran=?, tanggal_pengeluaran=? WHERE id=?', [data.id_dd, data.pengeluaran, data.tanggal_pengeluaran, id],
+    db.query('UPDATE pengeluaran set pengeluaran=?, tanggal_pengeluaran=? WHERE id=?', [data.pengeluaran, data.tanggal_pengeluaran, id],
         function(error, results) {
             if (error) throw error
             var changedRows = results.changedRows;
