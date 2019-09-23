@@ -10,7 +10,8 @@ let kegiatanRoutes = require('./routes/kegiatanRoutes')
 
 const express = require('express')
 const app = express()
-const port = 8000
+const port = 8000;
+const io = require('socket.io');
 
 let body_parser = require('body-parser')
 app.use(body_parser.urlencoded({ extended: true }))
