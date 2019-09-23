@@ -8,6 +8,8 @@ exports.index = function(req, res) {
             res.send(results, 200)
         })
 }
+
+
 exports.detail = function(req, res) {
     var id = req.params.id
     db.query("SELECT * FROM pemasukan WHERE id = ?", [id],
@@ -21,13 +23,27 @@ exports.detail = function(req, res) {
             }
         })
 }
+
+
 exports.create = function(req, res) {
     var data = {
         id_dd: req.body.id_dd,
         pemasukan: req.body.pemasukan,
-        tanggal_pemasukan: req.body.tanggal_pemasukan
+        jenis_pemasukan: req.body.jenis_pemasukan,
+        tanggal_pemasukan: new Date()
     }
-    db.query('INSERT INTO pemasukan (id_dd, pemasukan, tanggal_pemasukan) VALUES (?,?,?)', [data.id_dd, data.pemasukan, data.tanggal_pemasukan], function(error, results) {
+    db.query('INSERT INTO pemasukan (id_dd, pemasukan, jenis_pemasukan, tanggal_pemasukan) VALUES (?,?,?,?)', [data.id_dd, data.pemasukan, data.jenis_pemasukan, data.tanggal_pemasukan], function(error, results) {
+        if (error) throw error;
+
+        var id = results.insertId;
+        if (id) {
+            data.id = results.insertId;
+            res.send(data, 201)
+        } else {
+            res.send(400)
+        }
+    })
+    db.query('UPDATE kas SET total_kas=total_kas+? WHERE jenis_bendahara=?', [data.pemasukan, data.jenis_pemasukan], function(error, results) {
         if (error) throw error;
 
         var id = results.insertId;
@@ -39,14 +55,15 @@ exports.create = function(req, res) {
         }
     })
 }
+
+
 exports.update = function(req, res) {
     var id = req.params.id;
     var data = {
-        id_dd: req.body.id_dd,
         pemasukan: req.body.pemasukan,
-        tanggal_pemasukan: req.body.tanggal_pemasukan
+        tanggal_pemasukan: new Date()
     }
-    db.query('UPDATE pemasukan set id_dd=?, pemasukan=?, tanggal_pemasukan=? WHERE id=?', [data.id_dd, data.pemasukan, data.tanggal_pemasukan, id],
+    db.query('UPDATE pemasukan set pemasukan=?, tanggal_pemasukan=? WHERE id=?', [data.pemasukan, data.tanggal_pemasukan, id],
         function(error, results) {
             if (error) throw error
             var changedRows = results.changedRows;
@@ -58,6 +75,8 @@ exports.update = function(req, res) {
             }
         })
 }
+
+
 exports.delete = function(req, res) {
     var id = req.params.id
     db.query('DELETE FROM pemasukan WHERE id = ?', [id],
