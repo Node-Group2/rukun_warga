@@ -23,12 +23,12 @@ exports.detail = function(req, res) {
 }
 exports.create = function(req, res) {
     var data = {
-        id_dd: req.body.id_dd,
         kepala_bendahara: req.body.kepala_bendahara,
+        jenis_bendahara: req.body.jenis_bendahara,
         total_kas: req.body.total_kas,
         tanggal_diperbarui: new Date()
     }
-    db.query('INSERT INTO kas (id_dd, kepala_bendahara, total_kas, tanggal_diperbarui) VALUES (?,?,?,?)', [data.id_dd, data.kepala_bendahara, data.total_kas, data.tanggal_diperbarui], function(error, results) {
+    db.query('INSERT INTO kas (kepala_bendahara, jenis_bendahara, total_kas, tanggal_diperbarui) VALUES (?,?,?,?)', [data.kepala_bendahara, data.jenis_bendahara, data.total_kas, data.tanggal_diperbarui], function(error, results) {
         if (error) throw error;
 
         var id = results.insertId;
@@ -43,12 +43,12 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
     var id = req.params.id;
     var data = {
-        id_dd: req.body.id_dd,
         kepala_bendahara: req.body.kepala_bendahara,
+        jenis_bendahara: req.body.jenis_bendahara,
         total_kas: req.body.total_kas,
         tanggal_diperbarui: new Date()
     }
-    db.query('UPDATE kas set id_dd=?, kepala_bendahara=?, total_kas=?, tanggal_diperbarui=? WHERE id=?', [data.id_dd, data.kepala_bendahara, data.total_kas, data.tanggal_diperbarui, id],
+    db.query('UPDATE kas set kepala_bendahara=?, jenis_bendahara=?, total_kas=?, tanggal_diperbarui=? WHERE id=?', [data.kepala_bendahara, data.jenis_bendahara, data.total_kas, data.tanggal_diperbarui, id],
         function(error, results) {
             if (error) throw error
             var changedRows = results.changedRows;
