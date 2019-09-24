@@ -34,6 +34,7 @@ exports.create = function(req, res) {
         biaya: req.body.biaya,
         status: req.body.status,
         jenis: req.body.jenis,
+        tanggal_pengeluaran: new Date(),
         tipe: "Kegiatan"
     }
     db.query('INSERT INTO kegiatan ( ketua_pelaksana, nama_kegiatan, tanggal_kegiatan, deskripsi,biaya,status) VALUES (?,?,?,?,?,?)', [data.ketua_pelaksana, data.nama_kegiatan, data.tanggal_kegiatan, data.deskripsi, data.biaya, data.status], function(error, results) {
@@ -50,26 +51,11 @@ exports.create = function(req, res) {
 
     db.query('UPDATE kas SET total_kas=total_kas-? WHERE jenis_bendahara=?', [data.biaya, data.jenis],
         function(error, results) {
-            if (error) throw error
-            var changedRows = results.changedRows;
-            if (changedRows > 0) {
-                data.id = id
-                res.send(data, 200)
-            } else {
-                res.send(404)
-            }
+
         })
 
-    db.query('INSERT INTO pengeluaran(id_dd, pengeluaran, jenis_pengeluaran, tanggal_pengeluaran) VALUE (?,?,?,?)', [data.ketua_pelaksana, data.biaya, data.tipe, data.tanggal_kegiatan], function(error, results) {
-        if (error) throw error;
+    db.query('INSERT INTO pengeluaran(id_dd, pengeluaran, jenis_pengeluaran, tanggal_pengeluaran) VALUE (?,?,?,?)', [data.ketua_pelaksana, data.biaya, data.tipe, data.tanggal_pengeluaran], function(error, results) {
 
-        var id = results.insertId;
-        if (id) {
-            data.id = results.insertId;
-            res.send(data, 201)
-        } else {
-            res.send(400)
-        }
     })
 }
 
