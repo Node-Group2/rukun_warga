@@ -39,13 +39,16 @@ exports.create = function(req, res) {
         if (id) {
             data.id = results.insertId;
             res.send(data, 201)
+
+            db.query('UPDATE kas SET total_kas=total_kas+? WHERE jenis_bendahara=?', [data.pemasukan, data.jenis_pemasukan], function(error, results) {
+
+            })
+
         } else {
             res.send(400)
         }
     })
-    db.query('UPDATE kas SET total_kas=total_kas+? WHERE jenis_bendahara=?', [data.pemasukan, data.jenis_pemasukan], function(error, results) {
-        
-    })
+
 }
 
 

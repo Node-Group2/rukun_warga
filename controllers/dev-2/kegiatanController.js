@@ -44,19 +44,23 @@ exports.create = function(req, res) {
         if (id) {
             data.id = results.insertId;
             res.send(data, 201)
+
+            db.query('UPDATE kas SET total_kas=total_kas-? WHERE jenis_bendahara=?', [data.biaya, data.jenis],
+                function(error, results) {
+
+                })
+
+            db.query('INSERT INTO pengeluaran(id_dd, pengeluaran, jenis_pengeluaran, tanggal_pengeluaran) VALUE (?,?,?,?)', [data.ketua_pelaksana, data.biaya, data.tipe, data.tanggal_pengeluaran], function(error, results) {
+
+            })
+
         } else {
             res.send(400)
+
         }
     })
 
-    db.query('UPDATE kas SET total_kas=total_kas-? WHERE jenis_bendahara=?', [data.biaya, data.jenis],
-        function(error, results) {
 
-        })
-
-    db.query('INSERT INTO pengeluaran(id_dd, pengeluaran, jenis_pengeluaran, tanggal_pengeluaran) VALUE (?,?,?,?)', [data.ketua_pelaksana, data.biaya, data.tipe, data.tanggal_pengeluaran], function(error, results) {
-
-    })
 }
 
 
