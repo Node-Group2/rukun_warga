@@ -44,15 +44,7 @@ exports.create = function(req, res) {
         }
     })
     db.query('UPDATE kas SET total_kas=total_kas+? WHERE jenis_bendahara=?', [data.pemasukan, data.jenis_pemasukan], function(error, results) {
-        if (error) throw error;
-
-        var id = results.insertId;
-        if (id) {
-            data.id = results.insertId;
-            res.send(data, 201)
-        } else {
-            res.send(400)
-        }
+        
     })
 }
 
