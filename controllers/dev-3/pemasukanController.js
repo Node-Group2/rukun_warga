@@ -29,48 +29,43 @@ exports.create = function(req, res) {
     var data = {
         id_dd: req.body.id_dd,
         pemasukan: req.body.pemasukan,
-        jenis_pemasukan: req.body.jenis_pemasukan,
-        tanggal_pemasukan: new Date()
+        jenis_pemasukan: req.body.jenis_pemasukan
     }
-    db.query('INSERT INTO pemasukan (id_dd, pemasukan, jenis_pemasukan, tanggal_pemasukan) VALUES (?,?,?,?)', [data.id_dd, data.pemasukan, data.jenis_pemasukan, data.tanggal_pemasukan], function(error, results) {
-        if (error) throw error;
+    
+    db.query("SELECT id FROM data_diri WHERE id = ?",[data.ketua_pelaksana],
+    function(error,results){
+        if(error) throw error
 
-        var id = results.insertId;
-        if (id) {
-            data.id = results.insertId;
-            res.send(data, 201)
-
-            db.query('UPDATE kas SET total_kas=total_kas+? WHERE jenis_bendahara=?', [data.pemasukan, data.jenis_pemasukan], function(error, results) {
-
+        if(results.length == 0)
+        {
+            res.send("ID Data Diri Belum Terdaftar",400);
+        }
+        else if(results.length == 1)
+        {
+            db.query('INSERT INTO pemasukan (id_dd, pemasukan, jenis_pemasukan) VALUES (?,?,?,?)', [data.id_dd, data.pemasukan, data.jenis_pemasukan], function(error, results) {
+                if (error) throw error;
+        
+                var id = results.insertId;
+                if (id) {
+                    data.id = results.insertId;
+                    res.send(data, 201)
+        
+                    db.query('UPDATE kas SET total_kas=total_kas+? WHERE jenis_bendahara=?', [data.pemasukan, data.jenis_pemasukan], function(error, results) {
+        
+                    })
+        
+                } else {
+                    res.send(400)
+                }
             })
-
-        } else {
-            res.send(400)
+        }
+        else
+        {
+            res.send(404);
         }
     })
 
 }
-
-
-exports.update = function(req, res) {
-    var id = req.params.id;
-    var data = {
-        pemasukan: req.body.pemasukan,
-        tanggal_pemasukan: new Date()
-    }
-    db.query('UPDATE pemasukan set pemasukan=?, tanggal_pemasukan=? WHERE id=?', [data.pemasukan, data.tanggal_pemasukan, id],
-        function(error, results) {
-            if (error) throw error
-            var changedRows = results.changedRows;
-            if (changedRows > 0) {
-                data.id = id
-                res.send(data, 200)
-            } else {
-                res.send(404)
-            }
-        })
-}
-
 
 exports.delete = function(req, res) {
     var id = req.params.id
