@@ -12,6 +12,7 @@ exports.index = function(req, res) {
             }
         })
 }
+
 exports.detail = function(req, res) {
     var id = req.params.id
     db.query("SELECT * FROM kartu_keluarga WHERE id = ?", [id],
@@ -25,6 +26,7 @@ exports.detail = function(req, res) {
             }
         })
 }
+
 exports.create = function(req, res) {
    
     var data = {
@@ -95,6 +97,7 @@ exports.update = function(req, res) {
         res.send("Status Tidak Ada" , 400)
     }
 }
+
 exports.delete = function(req, res) {
     var id = req.params.id
     db.query('DELETE FROM kartu_keluarga WHERE id = ?', [id],

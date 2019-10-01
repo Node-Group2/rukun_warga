@@ -13,21 +13,19 @@ exports.index = function(req, res) {
         })
 }
 
-
 exports.detail = function(req, res) {
     var id = req.params.id
     db.query("SELECT * FROM kegiatan WHERE id = ?", [id],
-        function(error, results) {
-            if (error) throw error
+    function(error, results) {
+        if (error) throw error
 
-            if (results.length > 0) {
-                res.send(results[0], 200)
-            } else {
-                res.send(404)
-            }
-        })
+        if (results.length > 0) {
+            res.send(results[0], 200)
+        } else {
+            res.send(404)
+        }
+    })
 }
-
 
 exports.create = function(req, res) {
     var data = {
@@ -87,7 +85,6 @@ exports.create = function(req, res) {
     })   
 }
 
-
 exports.update = function(req, res) {
     var id = req.params.id;
     var data = {
@@ -118,7 +115,6 @@ exports.update = function(req, res) {
         res.send("Tidak ada status pelaksanaan", 400)
     }
 }
-
 
 exports.delete = function(req, res) {
     var id = req.params.id

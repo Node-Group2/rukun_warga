@@ -2,32 +2,30 @@ let db = require('../../config-routes/mysql-conn')
  
 exports.index = function(req, res) {
     db.query("SELECT * FROM pemasukan",
-        function(error, results) {
-            if (error) throw error;
- 
-            if(results.length == 0){
-                res.send("Data Kosong", 200)
-            }else{
-                res.send(results, 200)
-            }
-        })
+    function(error, results) {
+        if (error) throw error;
+
+        if(results.length == 0){
+            res.send("Data Kosong", 200)
+        }else{
+            res.send(results, 200)
+        }
+    })
 }
- 
  
 exports.detail = function(req, res) {
     var id = req.params.id
     db.query("SELECT * FROM pemasukan WHERE id = ?", [id],
-        function(error, results) {
-            if (error) throw error
- 
-            if (results.length > 0) {
-                res.send(results[0], 200)
-            } else {
-                res.send(400)
-            }
-        })
+    function(error, results) {
+        if (error) throw error
+
+        if (results.length > 0) {
+            res.send(results[0], 200)
+        } else {
+            res.send(400)
+        }
+    })
 }
- 
  
 exports.create = function(req, res) {
     var data = {
@@ -82,13 +80,13 @@ exports.create = function(req, res) {
 exports.delete = function(req, res) {
     var id = req.params.id
     db.query('DELETE FROM pemasukan WHERE id = ?', [id],
-        function(error, results) {
-            if (error) throw error
- 
-            if (results.affectedRows > 0) {
-                res.send("Data Berhasil Dihapus", 200)
-            } else {
-                res.send(404)
-            }
-        })
+    function(error, results) {
+        if (error) throw error
+
+        if (results.affectedRows > 0) {
+            res.send("Data Berhasil Dihapus", 200)
+        } else {
+            res.send(404)
+        }
+    })
 }

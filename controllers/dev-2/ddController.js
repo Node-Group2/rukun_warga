@@ -12,6 +12,7 @@ exports.index = function(req, res) {
             }
         })
 }
+
 exports.detail = function(req, res) {
     var id = req.params.id
     db.query("SELECT * FROM data_diri WHERE id = ?", [id],
@@ -25,6 +26,7 @@ exports.detail = function(req, res) {
             }
         })
 }
+
 exports.create = function(req, res) {
    
     var data = {
