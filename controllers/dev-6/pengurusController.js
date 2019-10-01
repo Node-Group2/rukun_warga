@@ -5,7 +5,11 @@ exports.index = function(req, res) {
         function(error, results) {
             if (error) throw error;
 
-            res.send(results, 200)
+            if(results.length == 0){
+                res.send("Data Kosong", 200)
+            }else{
+                res.send(results, 200)
+            }
         })
 }
 exports.detail = function(req, res) {
@@ -25,20 +29,38 @@ exports.create = function(req, res) {
     var data = {
         id_dd: req.body.id_dd,
         jabatan: req.body.jabatan,
-        status: req.body.status
+        status: "Aktif"
     }
-    db.query('INSERT INTO pengurus (id_dd, jabatan, status) VALUES (?,?,?)', [data.id_dd, data.jabatan, data.status], function(error, results) {
-        if (error) throw error;
+   
+    db.query("SELECT id FROM data_diri WHERE id = ?",[data.id_dd],
+    function(error,results){
+        if(error) throw error
 
-        var id = results.insertId;
-        if (id) {
-            data.id = results.insertId;
-            res.send(data, 201)
-        } else {
-            res.send(400)
+        if(results.length == 0)
+        {
+            res.send("ID Data Diri Belum Terdaftar",400);
+        }
+        else if(results.length == 1)
+        {
+            db.query('INSERT INTO pengurus (id_dd, jabatan, status) VALUES (?,?,?)', [data.id_dd, data.jabatan, data.status], function(error, results) {
+                if (error) throw error;
+        
+                var id = results.insertId;
+                if (id) {
+                    data.id = results.insertId;
+                    res.send(data, 201)
+                } else {
+                    res.send(400)
+                }
+            })
+        }
+        else
+        {
+            res.send(404);
         }
     })
 }
+
 exports.update = function(req, res) {
     var id = req.params.id;
     var data = {
@@ -46,7 +68,14 @@ exports.update = function(req, res) {
         jabatan: req.body.jabatan,
         status: req.body.status
     }
-    db.query('UPDATE pengurus set id_dd=?, jabatan=?, status=? WHERE id=?', [data.id_dd, data.jabatan, data.status, id],
+
+    var str = data.status;
+    str = str.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+        return letter.toUpperCase();
+    });
+
+    if(str == "Aktif" || str =="Tidak Aktif" ){
+        db.query('UPDATE pengurus set id_dd=?, jabatan=?, status=? WHERE id=?', [data.id_dd, data.jabatan, data.status, id],
         function(error, results) {
             if (error) throw error
             var changedRows = results.changedRows;
@@ -56,8 +85,12 @@ exports.update = function(req, res) {
             } else {
                 res.send(404)
             }
-        })
+        })  
+    }else{
+        res.send("Status Tidak Ada", 400)
+    }
 }
+
 exports.delete = function(req, res) {
     var id = req.params.id
     db.query('DELETE FROM pengurus WHERE id = ?', [id],
@@ -65,7 +98,7 @@ exports.delete = function(req, res) {
             if (error) throw error
 
             if (results.affectedRows > 0) {
-                res.send(204)
+                res.send("Data Berhasil Dihapus", 200)
             } else {
                 res.send(404)
             }
